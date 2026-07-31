@@ -1,0 +1,185 @@
+name: Terraform AWS Deployment
+
+on:
+  push:
+    branches:
+      - dev
+      - main
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  # Variables from GitHub Environment
+  AWS_REGION: ${{ vars.AWS_REGION }}
+  AWS_ROLE_ARN: ${{ vars.AWS_ROLE_ARN }}
+  ENVIRONMENT: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+
+  # Secrets
+  SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+
+  # Constants
+  TERRAFORM_VERSION: "1.12.2"
+  VALID_ENVIRONMENTS: "dev stage prod"
+
+jobs:
+  validate-environment:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check Environment Value
+        run: |
+          if [[ ! "$VALID_ENVIRONMENTS" =~ "$ENVIRONMENT" ]]; then
+            echo "Invalid environment. Must be one of: $VALID_ENVIRONMENTS"
+            exit 1
+          fi
+      - name: Notify Timeout
+        if: ${{ cancelled() }}
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{
+            "text": "⏰ Terraform-IAC: validate-environment Job Timeout Notification"
+          }' ${{ env.SLACK_WEBHOOK }}
+
+  plan:
+    needs: validate-environment
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev-low-cost-infra' }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Modify TFVars File
+        run: |
+          chmod +x ./Utils/modify_tfvars.sh
+          ./Utils/modify_tfvars.sh ${{ env.ENVIRONMENT }}
+
+      - name: Configure AWS credentials using OIDC
+        id: aws_credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ env.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+          audience: sts.amazonaws.com
+        continue-on-error: true
+
+      - name: Notify Slack on AWS Credentials Failure
+        if: steps.aws_credentials.outcome == 'failure'
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{
+            "text": "❌ Terraform-IAC: Failed to assume AWS role in ${{ env.ENVIRONMENT }} environment!"
+          }' ${{ env.SLACK_WEBHOOK }}
+        continue-on-error: false
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+
+      - name: Terraform Init
+        id: init
+        run: |
+          if [ -f "backend-${{ env.ENVIRONMENT }}.hcl" ]; then
+            terraform init -backend-config="backend-${{ env.ENVIRONMENT }}.hcl"
+          else
+            echo "Backend configuration file backend-${{ env.ENVIRONMENT }}.hcl not found!"
+            exit 1
+          fi
+        continue-on-error: true
+
+      - name: Check Terraform Init Status
+        if: steps.init.outcome == 'failure'
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{
+            "text": "❌ Terraform-IAC: Init state failed in ${{ env.ENVIRONMENT }} environment!"
+          }' ${{ env.SLACK_WEBHOOK }}
+          exit 1
+
+      - name: Terraform Plan
+        id: plan
+        run: |
+          ./deploy.sh ${{ env.ENVIRONMENT }} plan -out=tfplan
+        continue-on-error: true
+
+      - name: Upload Terraform Plan
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan
+          path: tfplan
+          retention-days: 5
+
+      - name: Notify Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{
+            "text": "❌ Terraform-IAC: Terraform plan failed in ${{ env.ENVIRONMENT }} environment!"
+          }' ${{ env.SLACK_WEBHOOK }}
+          exit 1
+      - name: Notify Timeout
+        if: ${{ cancelled() }}
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{
+            "text": "⏰ Terraform-IAC: Terraform plan Job Timeout in ${{ env.ENVIRONMENT }} environment!"
+          }' ${{ env.SLACK_WEBHOOK }}
+
+  apply:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    environment: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev-low-cost-infra' }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # In the apply job, replace the AWS credentials step with:
+      - name: Configure AWS credentials using OIDC
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ env.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+          audience: sts.amazonaws.com
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+
+      - name: Download Terraform Plan
+        uses: actions/download-artifact@v4
+        with:
+          name: tfplan
+
+      - name: Modify TFVars File
+        run: |
+          chmod +x ./Utils/modify_tfvars.sh
+          ./Utils/modify_tfvars.sh ${{ env.ENVIRONMENT }}
+
+      - name: Terraform Apply
+        id: apply
+        run: |
+          ./deploy.sh ${{ env.ENVIRONMENT }} apply -auto-approve tfplan
+        continue-on-error: true
+
+      - name: Notify Success
+        if: steps.apply.outcome == 'success'
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{
+            "text": "✅ Terraform-IAC: Deployment successful in ${{ env.ENVIRONMENT }} environment!"
+          }' ${{ env.SLACK_WEBHOOK }}
+
+      - name: Notify Failure
+        if: steps.apply.outcome == 'failure'
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{
+            "text": "❌ Terraform-IAC: Deployment failed in ${{ env.ENVIRONMENT }} environment!"
+          }' ${{ env.SLACK_WEBHOOK }}
+          exit 1
+      - name: Notify Timeout
+        if: ${{ cancelled() }}
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{
+            "text": "⏰ Terraform-IAC: Apply Job Timeout in ${{ env.ENVIRONMENT }} environment!"
+          }' ${{ env.SLACK_WEBHOOK }}

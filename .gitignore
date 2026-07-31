@@ -1,0 +1,40 @@
+# Terraform
+*.tfstate
+*.tfstate.*
+*.tfvars
+.terraform/
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Terraform plan artifacts
+*.tfplan
+plan.tfplan
+plan.json
+tfplan
+
+# Secrets and sensitive files
+*.pem
+*.key
+*.crt
+*.env
+.env.*
+
+# Logs
+*.log
+
+# IDEs and editors
+.vscode/
+.kiro/
+.idea/
+*.swp
+*.swo
+*.bak
+*.tmp
+*~
+
+# OS
+.DS_Store
+Thumbs.db
