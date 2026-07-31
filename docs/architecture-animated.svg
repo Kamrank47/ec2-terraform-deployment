@@ -1,0 +1,212 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1300 830" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrowGreen" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#059669"/>
+    </marker>
+    <marker id="arrowBlue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrowIndigo" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#4f46e5"/>
+    </marker>
+    <marker id="arrowAmber" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#d97706"/>
+    </marker>
+    <marker id="arrowGray" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#64748b"/>
+    </marker>
+    <filter id="cardShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0f172a" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+
+  <style>
+    .card-label { font-size: 13px; font-weight: 600; fill: #0f172a; }
+    .card-sub   { font-size: 10.5px; fill: #334155; }
+    .section    { font-size: 12px; font-weight: 700; letter-spacing: 0.5px; fill: #64748b; }
+    .flow       { stroke-dasharray: 6 5; fill: none; stroke-width: 2; }
+    @media (prefers-color-scheme: dark) {
+      .bgrect { fill: #0d1117; }
+      .card-label { fill: #f1f5f9; }
+      .card-sub   { fill: #cbd5e1; }
+      .section    { fill: #94a3b8; }
+      .vpcbox     { stroke: #475569 !important; }
+    }
+  </style>
+
+  <rect class="bgrect" x="0" y="0" width="1300" height="830" fill="#ffffff"/>
+
+  <!-- ============ CI/CD ROW ============ -->
+  <text class="section" x="30" y="24">CI/CD — GITHUB ACTIONS (OIDC)</text>
+
+  <g filter="url(#cardShadow)"><rect x="30" y="40" width="200" height="56" rx="10" fill="#1e293b" stroke="#0f172a"/></g>
+  <text class="card-label" x="130" y="64" text-anchor="middle" fill="#f8fafc">👨‍💻 Developer</text>
+  <text class="card-sub" x="130" y="80" text-anchor="middle" fill="#cbd5e1">git push</text>
+
+  <g filter="url(#cardShadow)"><rect x="260" y="40" width="200" height="56" rx="10" fill="#ede9fe" stroke="#7c3aed"/></g>
+  <text class="card-label" x="360" y="64" text-anchor="middle">⚙️ GitHub Actions</text>
+  <text class="card-sub" x="360" y="80" text-anchor="middle">plan → apply</text>
+
+  <g filter="url(#cardShadow)"><rect x="490" y="40" width="200" height="56" rx="10" fill="#ede9fe" stroke="#7c3aed"/></g>
+  <text class="card-label" x="590" y="64" text-anchor="middle">🔐 IAM OIDC Role</text>
+  <text class="card-sub" x="590" y="80" text-anchor="middle">no static AWS keys</text>
+
+  <g filter="url(#cardShadow)"><rect x="720" y="40" width="200" height="56" rx="10" fill="#ede9fe" stroke="#7c3aed"/></g>
+  <text class="card-label" x="820" y="64" text-anchor="middle">🔁 CodeDeploy</text>
+  <text class="card-sub" x="820" y="80" text-anchor="middle">blue/green release</text>
+
+  <g filter="url(#cardShadow)"><rect x="950" y="40" width="200" height="56" rx="10" fill="#fef3c7" stroke="#d97706"/></g>
+  <text class="card-label" x="1050" y="64" text-anchor="middle">📦 S3 Artifacts</text>
+  <text class="card-sub" x="1050" y="80" text-anchor="middle">staged build output</text>
+
+  <g filter="url(#cardShadow)"><rect x="260" y="170" width="200" height="56" rx="10" fill="#1e293b" stroke="#0f172a"/></g>
+  <text class="card-label" x="360" y="194" text-anchor="middle" fill="#f8fafc">💬 Slack</text>
+  <text class="card-sub" x="360" y="210" text-anchor="middle" fill="#cbd5e1">stage notifications</text>
+
+  <!-- ============ VPC ============ -->
+  <rect class="vpcbox" x="210" y="300" width="940" height="380" rx="14" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 3"/>
+  <text class="section" x="230" y="290">VPC — PUBLIC SUBNETS</text>
+
+  <g filter="url(#cardShadow)"><rect x="20" y="470" width="170" height="56" rx="10" fill="#1e293b" stroke="#0f172a"/></g>
+  <text class="card-label" x="105" y="494" text-anchor="middle" fill="#f8fafc">🌐 Internet</text>
+  <text class="card-sub" x="105" y="510" text-anchor="middle" fill="#cbd5e1">Users</text>
+
+  <g filter="url(#cardShadow)"><rect x="250" y="470" width="170" height="56" rx="10" fill="#dbeafe" stroke="#2563eb"/></g>
+  <text class="card-label" x="335" y="494" text-anchor="middle">⚖️ Load Balancer</text>
+  <text class="card-sub" x="335" y="510" text-anchor="middle">ELB</text>
+
+  <g filter="url(#cardShadow)"><rect x="480" y="470" width="230" height="56" rx="10" fill="#ecfdf5" stroke="#059669"/></g>
+  <text class="card-label" x="595" y="494" text-anchor="middle">🖥️ Auto Scaling Group</text>
+  <text class="card-sub" x="595" y="510" text-anchor="middle">EC2 app fleet</text>
+
+  <g filter="url(#cardShadow)"><rect x="780" y="470" width="230" height="56" rx="10" fill="#f3f4f6" stroke="#6b7280"/></g>
+  <text class="card-label" x="895" y="494" text-anchor="middle">📈 EC2 Monitoring</text>
+  <text class="card-sub" x="895" y="510" text-anchor="middle">Prometheus + Loki + Grafana</text>
+
+  <g filter="url(#cardShadow)"><rect x="480" y="610" width="230" height="56" rx="10" fill="#ecfdf5" stroke="#059669"/></g>
+  <text class="card-label" x="595" y="634" text-anchor="middle">⚡ Redis</text>
+  <text class="card-sub" x="595" y="650" text-anchor="middle">ElastiCache</text>
+
+  <!-- ============ SUPPORTING SERVICES ROW ============ -->
+  <text class="section" x="110" y="722">SUPPORTING SERVICES</text>
+
+  <g filter="url(#cardShadow)"><rect x="110" y="734" width="210" height="56" rx="10" fill="#fef3c7" stroke="#d97706"/></g>
+  <text class="card-label" x="215" y="758" text-anchor="middle">📦 ECR</text>
+  <text class="card-sub" x="215" y="774" text-anchor="middle">backend image</text>
+
+  <g filter="url(#cardShadow)"><rect x="340" y="734" width="210" height="56" rx="10" fill="#fef3c7" stroke="#d97706"/></g>
+  <text class="card-label" x="445" y="758" text-anchor="middle">🔑 SSM + Secrets Mgr</text>
+  <text class="card-sub" x="445" y="774" text-anchor="middle">config &amp; Lambda secrets</text>
+
+  <g filter="url(#cardShadow)"><rect x="570" y="734" width="210" height="56" rx="10" fill="#fef3c7" stroke="#d97706"/></g>
+  <text class="card-label" x="675" y="758" text-anchor="middle">🪣 S3 Assets</text>
+  <text class="card-sub" x="675" y="774" text-anchor="middle">public / private / temp</text>
+
+  <g filter="url(#cardShadow)"><rect x="800" y="734" width="210" height="56" rx="10" fill="#e0e7ff" stroke="#4f46e5"/></g>
+  <text class="card-label" x="905" y="758" text-anchor="middle">📬 SQS → Lambda</text>
+  <text class="card-sub" x="905" y="774" text-anchor="middle">background jobs + DLQs</text>
+
+  <g filter="url(#cardShadow)"><rect x="1030" y="734" width="210" height="56" rx="10" fill="#f3f4f6" stroke="#6b7280"/></g>
+  <text class="card-label" x="1135" y="758" text-anchor="middle">💰 AWS Budgets</text>
+  <text class="card-sub" x="1135" y="774" text-anchor="middle">email cost alerts</text>
+
+  <!-- ============ EDGES: CI/CD (green) ============ -->
+  <path id="p1" class="flow" stroke="#059669" marker-end="url(#arrowGreen)" d="M230,68 L260,68"/>
+  <path id="p2" class="flow" stroke="#059669" marker-end="url(#arrowGreen)" d="M460,68 L490,68"/>
+  <path id="p3" class="flow" stroke="#059669" marker-end="url(#arrowGreen)" d="M690,68 L720,68"/>
+  <path id="p4" class="flow" stroke="#d97706" marker-end="url(#arrowAmber)" d="M920,68 L950,68"/>
+  <path id="p5" class="flow" stroke="#059669" marker-end="url(#arrowGreen)" d="M820,96 C800,220 700,320 620,470"/>
+
+  <!-- notifications (indigo) -->
+  <path id="p6" class="flow" stroke="#4f46e5" marker-end="url(#arrowIndigo)" d="M360,96 L360,170"/>
+
+  <!-- runtime traffic (blue) -->
+  <path id="p7" class="flow" stroke="#2563eb" marker-end="url(#arrowBlue)" d="M190,498 L250,498"/>
+  <path id="p8" class="flow" stroke="#2563eb" marker-end="url(#arrowBlue)" d="M420,498 L480,498"/>
+  <path id="p9" class="flow" stroke="#2563eb" marker-end="url(#arrowBlue)" d="M595,526 L595,610"/>
+
+  <!-- monitoring scrape (gray) -->
+  <path id="p10" class="flow" stroke="#64748b" marker-end="url(#arrowGray)" d="M780,498 L710,498"/>
+
+  <!-- supporting services (amber/indigo) fan-out from ASG -->
+  <path id="p11" class="flow" stroke="#d97706" marker-end="url(#arrowAmber)" d="M540,526 C420,600 300,650 215,734"/>
+  <path id="p12" class="flow" stroke="#d97706" marker-end="url(#arrowAmber)" d="M580,526 C520,600 470,650 445,734"/>
+  <path id="p13" class="flow" stroke="#d97706" marker-end="url(#arrowAmber)" d="M610,526 C630,600 660,650 675,734"/>
+  <path id="p14" class="flow" stroke="#4f46e5" marker-end="url(#arrowIndigo)" d="M650,526 C750,600 850,650 905,734"/>
+
+  <!-- ============ ANIMATED DOTS ============ -->
+  <circle r="5" fill="#059669">
+    <animateMotion dur="4s" repeatCount="indefinite"
+      path="M230,68 L260,68 L460,68 L490,68 L690,68 L720,68"/>
+  </circle>
+  <circle r="5" fill="#059669">
+    <animateMotion dur="4s" begin="1.4s" repeatCount="indefinite"
+      path="M820,96 C800,220 700,320 620,470"/>
+  </circle>
+  <circle r="4.5" fill="#d97706">
+    <animateMotion dur="3s" begin="0.6s" repeatCount="indefinite"
+      path="M920,68 L950,68"/>
+  </circle>
+  <circle r="4.5" fill="#4f46e5">
+    <animateMotion dur="3s" repeatCount="indefinite"
+      path="M360,96 L360,170"/>
+  </circle>
+
+  <circle r="5" fill="#2563eb">
+    <animateMotion dur="2.6s" repeatCount="indefinite"
+      path="M190,498 L250,498 L420,498 L480,498"/>
+  </circle>
+  <circle r="4.5" fill="#059669">
+    <animateMotion dur="2.6s" begin="0.9s" repeatCount="indefinite"
+      path="M595,526 L595,610"/>
+  </circle>
+  <circle r="4" fill="#64748b">
+    <animateMotion dur="2.6s" begin="1.3s" repeatCount="indefinite"
+      path="M780,498 L710,498"/>
+  </circle>
+
+  <circle r="4.5" fill="#d97706">
+    <animateMotion dur="3.6s" repeatCount="indefinite"
+      path="M540,526 C420,600 300,650 215,734"/>
+  </circle>
+  <circle r="4.5" fill="#d97706">
+    <animateMotion dur="3.6s" begin="0.8s" repeatCount="indefinite"
+      path="M580,526 C520,600 470,650 445,734"/>
+  </circle>
+  <circle r="4.5" fill="#d97706">
+    <animateMotion dur="3.6s" begin="1.6s" repeatCount="indefinite"
+      path="M610,526 C630,600 660,650 675,734"/>
+  </circle>
+  <circle r="4.5" fill="#4f46e5">
+    <animateMotion dur="3.6s" begin="2.2s" repeatCount="indefinite"
+      path="M650,526 C750,600 850,650 905,734"/>
+  </circle>
+
+  <!-- dash flow -->
+  <animate href="#p1" attributeName="stroke-dashoffset" from="0" to="-22" dur="1s" repeatCount="indefinite"/>
+  <animate href="#p2" attributeName="stroke-dashoffset" from="0" to="-22" dur="1s" repeatCount="indefinite"/>
+  <animate href="#p3" attributeName="stroke-dashoffset" from="0" to="-22" dur="1s" repeatCount="indefinite"/>
+  <animate href="#p4" attributeName="stroke-dashoffset" from="0" to="-22" dur="1s" repeatCount="indefinite"/>
+  <animate href="#p5" attributeName="stroke-dashoffset" from="0" to="-22" dur="1s" repeatCount="indefinite"/>
+  <animate href="#p6" attributeName="stroke-dashoffset" from="0" to="-22" dur="1s" repeatCount="indefinite"/>
+  <animate href="#p7" attributeName="stroke-dashoffset" from="0" to="-22" dur="1s" repeatCount="indefinite"/>
+  <animate href="#p8" attributeName="stroke-dashoffset" from="0" to="-22" dur="1s" repeatCount="indefinite"/>
+  <animate href="#p9" attributeName="stroke-dashoffset" from="0" to="-22" dur="1s" repeatCount="indefinite"/>
+  <animate href="#p10" attributeName="stroke-dashoffset" from="0" to="-22" dur="1s" repeatCount="indefinite"/>
+  <animate href="#p11" attributeName="stroke-dashoffset" from="0" to="-22" dur="1s" repeatCount="indefinite"/>
+  <animate href="#p12" attributeName="stroke-dashoffset" from="0" to="-22" dur="1s" repeatCount="indefinite"/>
+  <animate href="#p13" attributeName="stroke-dashoffset" from="0" to="-22" dur="1s" repeatCount="indefinite"/>
+  <animate href="#p14" attributeName="stroke-dashoffset" from="0" to="-22" dur="1s" repeatCount="indefinite"/>
+
+  <!-- ============ LEGEND ============ -->
+  <circle cx="40" cy="812" r="5" fill="#059669"/>
+  <text class="card-sub" x="52" y="816">CI/CD deploy flow</text>
+  <circle cx="220" cy="812" r="5" fill="#2563eb"/>
+  <text class="card-sub" x="232" y="816">Live user traffic</text>
+  <circle cx="400" cy="812" r="5" fill="#d97706"/>
+  <text class="card-sub" x="412" y="816">Config / image / data</text>
+  <circle cx="600" cy="812" r="5" fill="#4f46e5"/>
+  <text class="card-sub" x="612" y="816">Notifications / async jobs</text>
+  <circle cx="820" cy="812" r="5" fill="#64748b"/>
+  <text class="card-sub" x="832" y="816">Metrics scrape</text>
+</svg>

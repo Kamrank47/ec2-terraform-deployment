@@ -20,6 +20,11 @@ Built from real-world infrastructure I've deployed in my career, generalized her
 
 ## Architecture
 
+<img src="docs/architecture-animated.svg" alt="Animated architecture diagram showing the OIDC-authenticated CI/CD deploy flow and live request traffic flow through the VPC" width="100%">
+
+<details>
+<summary>Static Mermaid version (fallback / diff-friendly)</summary>
+
 ```mermaid
 flowchart TB
     dev["Developer push\n(GitHub)"]
@@ -75,6 +80,8 @@ flowchart TB
     classDef store fill:#e8e8e8,stroke:#888,color:#333;
     class ecr,artifacts,ssm,s3assets,sqs store;
 ```
+
+</details>
 
 ## Repository layout
 
