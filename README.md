@@ -22,67 +22,6 @@ Built from real-world infrastructure I've deployed in my career, generalized her
 
 <img src="docs/architecture-animated.svg" alt="Animated architecture diagram showing the OIDC-authenticated CI/CD deploy flow and live request traffic flow through the VPC" width="100%">
 
-<details>
-<summary>Static Mermaid version (fallback / diff-friendly)</summary>
-
-```mermaid
-flowchart TB
-    dev["Developer push\n(GitHub)"]
-
-    subgraph CICD["CI/CD (GitHub Actions + OIDC)"]
-        direction TB
-        gha["GitHub Actions\nplan / apply"]
-        oidc["AWS IAM OIDC Role\n(no static keys)"]
-        codedeploy["CodeDeploy\n(blue/green)"]
-        artifacts[("S3: CodeDeploy artifacts")]
-        slack(["Slack notifications"])
-    end
-
-    subgraph VPC["VPC"]
-        direction TB
-        subgraph Public["Public subnets"]
-            elb["Load Balancer"]
-            asg["Auto Scaling Group\n(EC2 app fleet)"]
-            mon["EC2: Prometheus + Loki + Grafana"]
-        end
-        redis[("ElastiCache Redis")]
-    end
-
-    ecr[("ECR: backend image")]
-    ssm[("SSM Parameter Store\n+ Secrets Manager")]
-    s3assets[("S3: public / private / temp assets")]
-    budget["AWS Budgets\n+ email alerts"]
-
-    subgraph Jobs["Async processing"]
-        direction TB
-        sqs[("SQS queues + DLQs")]
-        lambda["Lambda consumers"]
-    end
-
-    users(["Internet users"])
-
-    dev --> gha --> oidc --> codedeploy
-    codedeploy -.stages via.-> artifacts
-    codedeploy --> asg
-    gha --> slack
-
-    users -->|HTTP/HTTPS| elb --> asg
-    asg --> redis
-    asg -.pulls image.-> ecr
-    asg -.reads.-> ssm
-    asg -.reads/writes.-> s3assets
-    asg -->|enqueue| sqs --> lambda
-    lambda -.reads.-> ssm
-
-    mon -.scrapes metrics/logs.-> asg
-    budget -.cost alerts.-> gha
-
-    classDef store fill:#e8e8e8,stroke:#888,color:#333;
-    class ecr,artifacts,ssm,s3assets,sqs store;
-```
-
-</details>
-
 ## Repository layout
 
 ```
