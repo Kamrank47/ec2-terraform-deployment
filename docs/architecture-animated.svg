@@ -21,27 +21,24 @@
   </defs>
 
   <style>
-    .card-label { font-size: 13px; font-weight: 600; fill: #0f172a; }
-    .card-sub   { font-size: 10.5px; fill: #334155; }
-    .section    { font-size: 12px; font-weight: 700; letter-spacing: 0.5px; fill: #64748b; }
-    .flow       { stroke-dasharray: 6 5; fill: none; stroke-width: 2; }
-    @media (prefers-color-scheme: dark) {
-      .bgrect { fill: #0d1117; }
-      .card-label { fill: #f1f5f9; }
-      .card-sub   { fill: #cbd5e1; }
-      .section    { fill: #94a3b8; }
-      .vpcbox     { stroke: #475569 !important; }
-    }
+    /* Diagram is a self-contained light "card" - always readable regardless of
+       the surrounding page theme, same as any other embedded diagram image. */
+    .card-label      { font-size: 13px; font-weight: 600; fill: #0f172a; }
+    .card-sub        { font-size: 10.5px; fill: #334155; }
+    .card-label-dark { font-size: 13px; font-weight: 600; fill: #f8fafc; }
+    .card-sub-dark   { font-size: 10.5px; fill: #cbd5e1; }
+    .section         { font-size: 12px; font-weight: 700; letter-spacing: 0.5px; fill: #64748b; }
+    .flow            { stroke-dasharray: 6 5; fill: none; stroke-width: 2; }
   </style>
 
-  <rect class="bgrect" x="0" y="0" width="1300" height="830" fill="#ffffff"/>
+  <rect x="0" y="0" width="1300" height="830" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
 
   <!-- ============ CI/CD ROW ============ -->
   <text class="section" x="30" y="24">CI/CD — GITHUB ACTIONS (OIDC)</text>
 
   <g filter="url(#cardShadow)"><rect x="30" y="40" width="200" height="56" rx="10" fill="#1e293b" stroke="#0f172a"/></g>
-  <text class="card-label" x="130" y="64" text-anchor="middle" fill="#f8fafc">👨‍💻 Developer</text>
-  <text class="card-sub" x="130" y="80" text-anchor="middle" fill="#cbd5e1">git push</text>
+  <text class="card-label-dark" x="130" y="64" text-anchor="middle">👨‍💻 Developer</text>
+  <text class="card-sub-dark" x="130" y="80" text-anchor="middle">git push</text>
 
   <g filter="url(#cardShadow)"><rect x="260" y="40" width="200" height="56" rx="10" fill="#ede9fe" stroke="#7c3aed"/></g>
   <text class="card-label" x="360" y="64" text-anchor="middle">⚙️ GitHub Actions</text>
@@ -60,16 +57,16 @@
   <text class="card-sub" x="1050" y="80" text-anchor="middle">staged build output</text>
 
   <g filter="url(#cardShadow)"><rect x="260" y="170" width="200" height="56" rx="10" fill="#1e293b" stroke="#0f172a"/></g>
-  <text class="card-label" x="360" y="194" text-anchor="middle" fill="#f8fafc">💬 Slack</text>
-  <text class="card-sub" x="360" y="210" text-anchor="middle" fill="#cbd5e1">stage notifications</text>
+  <text class="card-label-dark" x="360" y="194" text-anchor="middle">💬 Slack</text>
+  <text class="card-sub-dark" x="360" y="210" text-anchor="middle">stage notifications</text>
 
   <!-- ============ VPC ============ -->
   <rect class="vpcbox" x="210" y="300" width="940" height="380" rx="14" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 3"/>
   <text class="section" x="230" y="290">VPC — PUBLIC SUBNETS</text>
 
   <g filter="url(#cardShadow)"><rect x="20" y="470" width="170" height="56" rx="10" fill="#1e293b" stroke="#0f172a"/></g>
-  <text class="card-label" x="105" y="494" text-anchor="middle" fill="#f8fafc">🌐 Internet</text>
-  <text class="card-sub" x="105" y="510" text-anchor="middle" fill="#cbd5e1">Users</text>
+  <text class="card-label-dark" x="105" y="494" text-anchor="middle">🌐 Internet</text>
+  <text class="card-sub-dark" x="105" y="510" text-anchor="middle">Users</text>
 
   <g filter="url(#cardShadow)"><rect x="250" y="470" width="170" height="56" rx="10" fill="#dbeafe" stroke="#2563eb"/></g>
   <text class="card-label" x="335" y="494" text-anchor="middle">⚖️ Load Balancer</text>
