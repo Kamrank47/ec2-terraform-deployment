@@ -3,8 +3,8 @@ name: Terraform AWS Deployment
 on:
   push:
     branches:
-      - dev
-      - main
+      - test1
+      - test2
 
 permissions:
   id-token: write
