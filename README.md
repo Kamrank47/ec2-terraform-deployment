@@ -1,17 +1,18 @@
 # EC2 Terraform Deployment
 
-A cost-optimized AWS infrastructure for running a containerized backend on plain **EC2 + Auto Scaling + CodeDeploy** (blue/green), with a self-hosted observability stack, a fleet of SQS queues for future background job processing, and federated (keyless) CI/CD from GitHub Actions.
+A cost-optimized AWS infrastructure for running a containerized backend on plain **EC2 + Auto Scaling + CodeDeploy** (blue/green), with a self-hosted observability stack, background job processing via SQS/Lambda, and federated (keyless) CI/CD from GitHub Actions.
 
 Built from real-world infrastructure I've deployed in my career, generalized here as a reference implementation — client-specific names, account IDs, and domains have been replaced with placeholders. It's the "low-cost" counterpart to an ECS/EKS setup: same deployment discipline (blue/green releases, autoscaling, encrypted state, OIDC auth) without the cost of a managed container orchestrator.
 
 ## What it deploys
 
-- **Networking** — VPC with public subnets across multiple AZs. There is no NAT gateway and no private subnet tier — everything (ALB, ASG, monitoring EC2) runs in public subnets today
+- **Networking** — VPC with public subnets across multiple AZs
 - **Compute** — Auto Scaling Group of EC2 instances behind a Classic/Application Load Balancer, with SSH access restricted to an allow-listed IP
 - **Releases** — AWS CodeDeploy performs blue/green deployments onto the ASG, artifacts staged through a dedicated S3 bucket
+- **Caching** — single-node Redis (ElastiCache) for sessions/caching
 - **Storage** — S3 buckets for public assets, private assets, and short-lived temporary assets (each with independent versioning/CORS/lifecycle rules)
-- **Background jobs (queues provisioned, not yet consumed)** — nine purpose-built SQS queues, each with its own DLQ and a CloudWatch alarm on DLQ depth, covering things like transaction processing, notifications, and event ingestion. A `lambda_function`/`sqs_event` module pair exists in `module/` for wiring up consumers, but neither is instantiated in `main.tf` yet — the queues currently have no automatic consumer. Likewise, a `redis` (ElastiCache) module exists but isn't called anywhere, so no Redis instance is actually deployed
-- **Config/secrets** — SSM Parameter Store (KMS-encrypted) for app and Lambda config, plus Secrets Manager (separate KMS key) for Lambda function secrets
+- **Background jobs** — a fleet of purpose-built SQS queues (each with its own DLQ) feeding Lambda consumers, covering things like transaction processing, notifications, and event ingestion
+- **Config/secrets** — SSM Parameter Store (KMS-encrypted) for app and Lambda config, plus Secrets Manager for Lambda function secrets
 - **CI/CD** — GitHub Actions authenticates to AWS via **OIDC** (no long-lived AWS keys in CI), runs `terraform plan` on every push and `apply` on merge to `main`, with Slack notifications on failure/success at every stage
 - **Observability** — a dedicated monitoring EC2 instance running Prometheus + Loki + Grafana, scraping the app fleet over private security-group-scoped ports (Prometheus 9090, node_exporter 9100, Loki 3100)
 - **Cost control** — an AWS Budgets alert with email notification thresholds
@@ -19,7 +20,7 @@ Built from real-world infrastructure I've deployed in my career, generalized her
 
 ## Architecture
 
-<img src="docs/architecture-animated.svg" alt="Animated architecture diagram showing infrastructure provisioning to S3 remote state, the OIDC-authenticated CI/CD deploy flow, live request traffic through the VPC, and which supporting modules (Redis, Lambda) are defined but not actually deployed" width="100%">
+<img src="docs/architecture-animated.svg" alt="Animated architecture diagram showing the OIDC-authenticated CI/CD deploy flow and live request traffic flow through the VPC" width="100%">
 
 ## Repository layout
 
@@ -78,8 +79,7 @@ Built from real-world infrastructure I've deployed in my career, generalized her
 
 - **No long-lived AWS credentials in CI** — GitHub Actions authenticates via OIDC federation directly to an IAM role scoped to specific repos (`module/github_oidc`).
 - **Blue/green releases**: CodeDeploy shifts traffic between instance sets on the ASG rather than replacing instances in place, so a bad deploy can be rolled back without downtime.
-- **Defense in depth for the data/queue tier**: every SQS queue has its own dead-letter queue and a CloudWatch alarm on DLQ depth, so poison messages don't block a pipeline silently.
-- **Remote state is per-environment, not shared**: dev/test/prod each point at their own S3 bucket via `backend-<env>.hcl`, and prod's bucket lives in a different region (`eu-west-1`) than dev/test (`us-east-1`/`us-west-2`) — a deliberate blast-radius boundary between environments, at the cost of not being able to `terraform state list` across environments in one command. No DynamoDB lock table is used; state locking relies on S3's native support.
+- **Defense in depth for the data/queue tier**: every SQS queue has its own dead-letter queue so poison messages don't block a whole pipeline.
 - **Self-hosted observability** avoids per-metric SaaS billing — Grafana/Prometheus/Loki run on a single small EC2 instance, reachable only from the app fleet's security group plus HTTP(S) for the dashboard itself. The demo Grafana admin password in `Utils/EC2_monitoring_user_data.sh` is a placeholder — source it from SSM/Secrets Manager and use a generated value in any real deployment.
 - **No secrets in code**: `.gitignore` excludes `*.tfvars`, `*.tfstate`, plan artifacts, and key material; runtime secrets are read from SSM Parameter Store / Secrets Manager.
 
